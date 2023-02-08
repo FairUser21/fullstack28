@@ -52,10 +52,48 @@ const ProductContextProvider = ({ children }) => {
     } catch (error) {}
   }
 
+  async function deleteProduct(id) {
+    try {
+      const token = JSON.parse(localStorage.getItem("token"));
+      const Authorization = `Bearer ${token.access}`;
+      const config = {
+        headers: {
+          Authorization,
+        },
+      };
+      const res = await axios.delete(`${API_PRODUCTS}${id}/`, config);
+      getProducts();
+    } catch (e) {
+      console.log(e);
+      setError(e);
+    }
+  }
+
+  async function addProducts(product) {
+    try {
+      const token = JSON.parse(localStorage.getItem("token"));
+      const Authorization = `Bearer ${token.access}`;
+      const config = {
+        headers: {
+          Authorization,
+        },
+      };
+
+      const res = await axios.post(`${API_PRODUCTS}`, product, config);
+      console.log(res.data);
+      navigate("/products");
+    } catch (error) {
+      console.log(error);
+      setError(error);
+    }
+  }
+
   const value = {
     products: state.products,
 
     getProducts,
+    deleteProduct,
+    addProducts,
   };
 
   return (

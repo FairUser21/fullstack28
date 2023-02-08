@@ -13,6 +13,8 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "./Contexts/AuthContextProvider";
+import { useProduct } from "./Contexts/ProductContextProvider";
 
 const pages = ["Products", "Pricing", "Blog"];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
@@ -37,6 +39,8 @@ function Navbar() {
   };
 
   const navigate = useNavigate();
+
+  const { user, logout } = useAuth();
 
   return (
     <AppBar position="static">
@@ -117,18 +121,44 @@ function Navbar() {
             LOGO
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-            <Button
-              onClick={() => navigate("/login")}
-              sx={{ my: 2, color: "white", display: "block" }}
-            >
-              Login
-            </Button>
-            <Button
-              onClick={() => navigate("/register")}
-              sx={{ my: 2, color: "white", display: "block" }}
-            >
-              Register
-            </Button>
+            {user ? (
+              <>
+                <Button
+                  onClick={() => navigate("/products")}
+                  sx={{ my: 2, color: "white", display: "block" }}
+                >
+                  Products
+                </Button>
+                <Button
+                  onClick={() => navigate("/admin")}
+                  sx={{ my: 2, color: "white", display: "block" }}
+                >
+                  Admin
+                </Button>
+                <Button
+                  onClick={() => logout()}
+                  sx={{ my: 2, color: "white", display: "block" }}
+                >
+                  Logout
+                </Button>
+              </>
+            ) : (
+              <>
+                {" "}
+                <Button
+                  onClick={() => navigate("/login")}
+                  sx={{ my: 2, color: "white", display: "block" }}
+                >
+                  Login
+                </Button>
+                <Button
+                  onClick={() => navigate("/register")}
+                  sx={{ my: 2, color: "white", display: "block" }}
+                >
+                  Register
+                </Button>
+              </>
+            )}
           </Box>
         </Toolbar>
       </Container>

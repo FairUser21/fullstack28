@@ -1,5 +1,7 @@
+import { Box } from "@mui/material";
 import React, { useEffect } from "react";
 import { useProduct } from "../Contexts/ProductContextProvider";
+import ProductCard from "./ProductCard";
 
 const ProductList = () => {
   const { getProducts, products } = useProduct();
@@ -8,9 +10,13 @@ const ProductList = () => {
     getProducts();
   }, []);
 
-  console.log(products);
-
-  return <div></div>;
+  return (
+    <Box>
+      {products.map((item) => (
+        <ProductCard key={item.id} item={item} />
+      ))}
+    </Box>
+  );
 };
 
 export default ProductList;
