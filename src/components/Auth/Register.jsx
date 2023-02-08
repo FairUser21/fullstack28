@@ -53,7 +53,6 @@ export default function Register() {
     }
 
     let formData = new FormData();
-
     formData.append("email", email);
     formData.append("password", password);
     formData.append("password_confirm", confirmPassword);

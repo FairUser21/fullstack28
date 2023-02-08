@@ -15,6 +15,8 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 import { Link as RouterLink } from "react-router-dom";
 import { Alert } from "@mui/material";
+import { useAuth } from "../Contexts/AuthContextProvider";
+import { useState } from "react";
 
 function Copyright(props) {
   return (
@@ -37,6 +39,23 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function Login() {
+  const { login } = useAuth();
+  const [email, setEmail] = useState("");
+
+  const [password, setPassword] = useState("");
+
+  const handleSubmit = () => {
+    if (!email.trim() || !password.trim()) {
+      alert("Заполните поля!");
+      return;
+    }
+
+    let formData = new FormData();
+    formData.append("email", email);
+    formData.append("password", password);
+    login(formData, email);
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
@@ -66,6 +85,8 @@ export default function Login() {
               name="email"
               autoComplete="email"
               autoFocus
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
             <TextField
               margin="normal"
@@ -76,6 +97,8 @@ export default function Login() {
               type="password"
               id="password"
               autoComplete="current-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
@@ -85,9 +108,10 @@ export default function Login() {
               //   type="submit"
               fullWidth
               variant="contained"
+              onClick={handleSubmit}
               sx={{ mt: 3, mb: 2 }}
             >
-              Log In
+              Login
             </Button>
             <Grid container>
               <Grid item xs>
@@ -97,7 +121,7 @@ export default function Login() {
               </Grid>
               <Grid item>
                 <RouterLink to="/register">
-                  <Typography>{"Don't have an account? Sign Up"}</Typography>
+                  <Typography>{"Dont' have an account? Sign Un"}</Typography>
                 </RouterLink>
               </Grid>
             </Grid>
