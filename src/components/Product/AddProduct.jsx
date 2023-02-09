@@ -1,9 +1,18 @@
-import { Box, Button, TextField, Typography } from "@mui/material";
-import React, { useState } from "react";
+import {
+  Box,
+  Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+  Typography,
+} from "@mui/material";
+import React, { useEffect, useState } from "react";
 import { useProduct } from "../Contexts/ProductContextProvider";
 
 const AddProduct = () => {
-  const { addProducts } = useProduct();
+  const { addProducts, getCategories, categories } = useProduct();
 
   const [product, setProduct] = useState({
     title: "",
@@ -13,6 +22,10 @@ const AddProduct = () => {
     image: "",
   });
 
+  useEffect(() => {
+    getCategories();
+  }, []);
+  console.log(categories);
   const handleChange = (e) => {
     if (e.target.name === "image") {
       setProduct({
@@ -70,16 +83,21 @@ const AddProduct = () => {
         value={product.price}
         onChange={handleChange}
       />
-      <TextField
-        sx={{ m: 1 }}
-        id="standart-basic"
-        label="Category"
-        variant="outlined"
-        fullWidth
-        name="category"
-        value={product.category}
-        onChange={handleChange}
-      />
+      <FormControl fullWidth>
+        <InputLabel>Category</InputLabel>
+        <Select
+          name="category"
+          label="category"
+          value={product.category}
+          onChange={handleChange}
+        >
+          {categories.map((item) => (
+            <MenuItem key={item.id} value={item.id}>
+              {item.title}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
       <TextField
         type="file"
         name="image"

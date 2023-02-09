@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { createContext, useContext, useReducer, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { API_PRODUCTS } from "../../const";
+import { API_CATEGORY, API_PRODUCTS } from "../../const";
 
 export const productContext = createContext();
 
@@ -19,9 +19,11 @@ function reducer(state = INIT_STATE, action) {
     case "GET_PRODUCTS":
       return {
         ...state,
-        products: action.payload,
-        // pages: Math.ceil(action.payload),
+        products: action.payload.results,
+        pages: Math.ceil(action.payload.count / 6),
       };
+    case "GET_CATEGORIES":
+      return { ...state, categories: action.payload };
     default:
       return state;
   }
@@ -43,13 +45,36 @@ const ProductContextProvider = ({ children }) => {
         },
       };
 
-      const res = await axios(`${API_PRODUCTS}`, config);
-      console.log(res);
+      const res = await axios(
+        `${API_PRODUCTS}${window.location.search}`,
+        config
+      );
+      console.log(res.data);
       dispatch({
         type: "GET_PRODUCTS",
-        payload: res.data.results,
+        payload: res.data,
       });
     } catch (error) {}
+  }
+
+  async function getCategories() {
+    try {
+      const token = JSON.parse(localStorage.getItem("token"));
+      const Authorization = `Bearer ${token.access}`;
+      const config = {
+        headers: {
+          Authorization,
+        },
+      };
+      const res = await axios(`${API_CATEGORY}list/`, config);
+      dispatch({
+        type: "GET_CATEGORIES",
+        payload: res.data.results,
+      });
+    } catch (error) {
+      console.log(error);
+      setError(error);
+    }
   }
 
   async function deleteProduct(id) {
@@ -90,10 +115,13 @@ const ProductContextProvider = ({ children }) => {
 
   const value = {
     products: state.products,
+    pages: state.pages,
+    categories: state.categories,
 
     getProducts,
     deleteProduct,
     addProducts,
+    getCategories,
   };
 
   return (

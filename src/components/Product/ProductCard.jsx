@@ -13,7 +13,7 @@ const ProductCard = ({ item }) => {
   const { deleteProduct } = useProduct();
 
   return (
-    <Card sx={{ maxWidth: 345 }}>
+    <Card sx={{ width: 345, margin: "3%" }}>
       <CardMedia
         component="img"
         height="140"
