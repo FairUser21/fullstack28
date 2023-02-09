@@ -24,6 +24,8 @@ function reducer(state = INIT_STATE, action) {
       };
     case "GET_CATEGORIES":
       return { ...state, categories: action.payload };
+    case "GET_ONE_PRODUCT":
+      return { ...state, oneProduct: action.payload };
     default:
       return state;
   }
@@ -49,7 +51,6 @@ const ProductContextProvider = ({ children }) => {
         `${API_PRODUCTS}${window.location.search}`,
         config
       );
-      console.log(res.data);
       dispatch({
         type: "GET_PRODUCTS",
         payload: res.data,
@@ -74,6 +75,44 @@ const ProductContextProvider = ({ children }) => {
     } catch (error) {
       console.log(error);
       setError(error);
+    }
+  }
+
+  async function getOneProduct(id) {
+    try {
+      const token = JSON.parse(localStorage.getItem("token"));
+      const Authorization = `Bearer ${token.access}`;
+      const config = {
+        headers: {
+          Authorization,
+        },
+      };
+      const res = await axios(`${API_PRODUCTS}${id}/`, config);
+      dispatch({
+        type: "GET_ONE_PRODUCT",
+        payload: res.data,
+      });
+    } catch (e) {
+      console.log(e);
+      setError(e);
+    }
+  }
+
+  async function editProduct(id, product) {
+    try {
+      const token = JSON.parse(localStorage.getItem("token"));
+      const Authorization = `Bearer ${token.access}`;
+      const config = {
+        headers: {
+          Authorization,
+        },
+      };
+      const res = await axios.patch(`${API_PRODUCTS}${id}/`, product, config);
+      getProducts();
+      navigate("/products");
+    } catch (e) {
+      console.log(e);
+      setError(e);
     }
   }
 
@@ -113,15 +152,35 @@ const ProductContextProvider = ({ children }) => {
     }
   }
 
+  async function toggleLike(id) {
+    try {
+      const token = JSON.parse(localStorage.getItem("token"));
+      const Authorization = `Bearer ${token.access}`;
+      const config = {
+        headers: {
+          Authorization,
+        },
+      };
+      const res = await axios(`${API_PRODUCTS}${id}/toggle_like/`, config);
+      getProducts();
+    } catch (e) {
+      console.log(e);
+      setError(e);
+    }
+  }
+
   const value = {
     products: state.products,
     pages: state.pages,
     categories: state.categories,
-
+    oneProduct: state.oneProduct,
     getProducts,
     deleteProduct,
+    getOneProduct,
+    editProduct,
     addProducts,
     getCategories,
+    toggleLike,
   };
 
   return (
